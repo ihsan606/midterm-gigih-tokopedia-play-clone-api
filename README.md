@@ -155,6 +155,7 @@ npm install
 npx prisma db push
 ```
 it will generate collections based on prisma schema in `src/prisma/schema.prisma`
+
 6. Run seeder
 ```bash
 npx prisma db seed
