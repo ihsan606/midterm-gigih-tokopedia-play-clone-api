@@ -155,9 +155,15 @@ npm install
 npx prisma db push
 ```
 it will generate collections based on prisma schema in `src/prisma/schema.prisma`
-
-End with an example of getting some data out of the system or using it for a little demo.
-
+6. Run seeder
+```bash
+npx prisma db seed
+```
+7. Run
+```bash 
+npm run dev
+```
+it will run application at localhost:3000
 ## API SPEC <a name="api_spect"></a>
 ### Video API Documentation
 
