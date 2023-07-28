@@ -127,7 +127,7 @@ What things you need to install the software and how to install them.
  (Prisma-Mongodb require database replica set for transactions)
 ```
 
-### Installing
+### Installing and Running Locally
 
 1. Clone Project
 ```bash
