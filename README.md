@@ -134,10 +134,12 @@ What things you need to install the software and how to install them.
 git clone https://github.com/ihsan606/midterm-gigih-tokopedia-play-clone-api.git
 cd midterm-gigih-tokopedia-play-clone-api
 ```
+2. Create a new file .env and copy the content from .env.example. This file will contain environment-specific configurations for the project. Make sure to update any necessary values in the .env file to match your setup.
 
-2. Ensure that your local Docker is active.
 
-3. Run the MongoDB container:
+3. Ensure that your local Docker is active.
+
+4. Run the MongoDB container:
    The MongoDB container will run on localhost:27017. To avoid port conflicts, make sure you have turned off the MongoDB service on your local computer.
 ```bash
 make dc-up-mongodb
@@ -148,13 +150,11 @@ make dc-up-mongodb
 ```bash
 npm install
 ```
-5.Create a new file .env and copy the content from .env.example. This file will contain environment-specific configurations for the project. Make sure to update any necessary values in the .env file to match your setup.
-
-And repeat
-
+5. Init database schema
+```bash
+npx prisma db push
 ```
-until finished
-```
+it will generate collections based on prisma schema in `src/prisma/schema.prisma`
 
 End with an example of getting some data out of the system or using it for a little demo.
 
