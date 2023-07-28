@@ -129,11 +129,26 @@ What things you need to install the software and how to install them.
 
 ### Installing
 
-
-
+1. Clone Project
+```bash
+git clone https://github.com/ihsan606/midterm-gigih-tokopedia-play-clone-api.git
+cd midterm-gigih-tokopedia-play-clone-api
 ```
+
+2. Ensure that your local Docker is active.
+
+3. Run the MongoDB container:
+   The MongoDB container will run on localhost:27017. To avoid port conflicts, make sure you have turned off the MongoDB service on your local computer.
+```bash
+make dc-up-mongodb
+# It will run docker compose up mongodb -d
+# you can find this configuration in Makefile
+```
+4. Install dependencies
+```bash
 npm install
 ```
+5.Create a new file .env and copy the content from .env.example. This file will contain environment-specific configurations for the project. Make sure to update any necessary values in the .env file to match your setup.
 
 And repeat
 
