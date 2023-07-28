@@ -27,7 +27,7 @@ The application boasts several notable features:
 
 ## Architecture
 ![architecture.png](readme-assets%2Farchitecture.png)
-![domain-model.png](..%2F..%2F..%2F..%2F..%2FDownloads%2Fdomain-model.png)
+![domain-model.png](readme-assets%2Fdomain-model.png)
 ## Database Stucture
 
 ```
