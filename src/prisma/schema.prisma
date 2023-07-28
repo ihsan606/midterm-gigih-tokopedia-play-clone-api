@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
+  username  String    @unique
+  role      Role      @default(USER)
+  password  String
+  createdAt DateTime? @default(now())
+  profile   Profile?
+  videos    Video[]
+  Comment   Comment[]
+}
+
+model Profile {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  fullName      String
+  profilePicUrl String?
+  dateOfBirth   String
+  createdAt     DateTime? @default(now())
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String    @unique @db.ObjectId
+}
+
+model Video {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  videoUrl     String
+  thumbnailUrl YoutubeMedia?
+  videoType    VideoType     @default(LIVE)
+  creator      User          @relation(fields: [creatorId], references: [id])
+  creatorId    String        @db.ObjectId
+  startedAt    DateTime?     @default(now())
+  endedAt      DateTime?
+  comments     Comment[]
+  products     Product[]
+}
+
+model Product {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  imageUrl      String
+  price         Float
+  originalPrice Float
+  discount      Float    @default(0)
+  Video         Video    @relation(fields: [videoId], references: [id])
+  videoId       String   @db.ObjectId
+  createdAt     DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  Video     Video?   @relation(fields: [videoId], references: [id])
+  videoId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+}
+
+model YoutubeMedia {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  defaultUrl  String?
+  mediumUrl   String?
+  highUrl     String?
+  standardUrl String?
+  maxresUrl   String?
+  video       Video    @relation(fields: [videoId], references: [id])
+  videoId     String   @unique @db.ObjectId
+  createdAt   DateTime @default(now())
+}
+
+enum Role {
+  USER
+  SELLER
+}
+
+enum VideoType {
+  LIVE
+  REWATCH
+}

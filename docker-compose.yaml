@@ -1,0 +1,49 @@
+version: '3'
+services:
+  backend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    image: tokped-play-api
+    container_name: tokped-play-backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DATABASE_URL=$DATABASE_URL
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - ./nodemon.json:/app/nodemon.json
+    expose:
+      - '3000'
+    command: npm run dev
+    networks:
+      - tokped-app-network
+
+  mongodb:
+    build: ./mongodb-rs
+    container_name: tokped-mongodb
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin 
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=tokopedia
+      - MONGO_REPLICA_HOST=mongodb
+      - MONGO_REPLICA_PORT=27017
+    ports:
+      - "27017:27017"
+    volumes:     
+      - dbdata:/data/db
+    networks:
+      - tokped-app-network
+
+networks:
+  tokped-app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+  node_modules:
