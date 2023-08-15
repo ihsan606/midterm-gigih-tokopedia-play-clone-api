@@ -36,28 +36,30 @@ let io = require('socket.io')(http, {
 io.on('connection', (socket: Socket) => {
   console.log('a user connected');
   const userId = socket.handshake.query.userId as string;
-  // Simpan videoId yang sedang dilihat oleh pengguna
   const videoId = socket.handshake.query.videoId as string;
   console.log('ada user baru nih', userId, 'sama video baru', videoId);
   let newData = {};
 
   socket.on('newComment', async (comment) => {
-    newData = await prisma.comment.create({
-      data: {
-        content: comment.content,
-        userId: userId,
-        videoId: videoId,
-      },
-      include: {
-        User: true,
-      },
-    });
-
-    newData = mapToCommentModel(newData);
-    
-    console.log('New comment:', newData);
-    // Broadcast komentar ke semua klien yang terhubung
-    io.emit('newComment', newData);
+    if (userId && videoId && comment.comment !== undefined && comment.comment !== '') {
+      
+      newData = await prisma.comment.create({
+        data: {
+          content: comment.content,
+          userId: userId,
+          videoId: videoId,
+        },
+        include: {
+          User: true,
+        },
+      });
+  
+      newData = mapToCommentModel(newData);
+      
+      console.log('New comment:', newData);
+      // Broadcast komentar ke semua klien yang terhubung
+      io.emit('newComment', newData);
+    }
   });
 
   socket.on('disconnect', () => {
