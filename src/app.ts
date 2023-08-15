@@ -41,7 +41,7 @@ io.on('connection', (socket: Socket) => {
   let newData = {};
 
   socket.on('newComment', async (comment) => {
-    if (userId && videoId && comment.comment !== undefined && comment.comment !== '') {
+    if (userId !== undefined && videoId !== undefined ) {
       
       newData = await prisma.comment.create({
         data: {
