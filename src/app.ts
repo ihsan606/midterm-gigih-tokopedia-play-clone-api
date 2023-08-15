@@ -25,9 +25,10 @@ app.use(express.json());
 export const http = require('http').Server(app);
 // set up socket.io and bind it to our
 // http server.
+const feUrl = process.env.FE_URL || 'https://fe-tokopedia-play-j07gmnu5m-ihsan606.vercel.app';
 let io = require('socket.io')(http, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: feUrl,
   },
 });
 
