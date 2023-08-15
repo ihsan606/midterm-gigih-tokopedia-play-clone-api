@@ -45,6 +45,7 @@ export const createOne = async (product: ProductRequest) => {
       data: {
         title: tokpedProduct.product.title,
         imageUrl: tokpedProduct.product.imageUrl ?? '',
+        productUrl: product.tokpedUrl,
         price: tokpedProduct.product.price ?? 0,
         originalPrice: tokpedProduct.product.originalPrice ?? tokpedProduct.product.price ?? 0,
         discount: tokpedProduct.product.discount ?? 0,
@@ -63,6 +64,7 @@ export const createOneManualy = async (product: ProductManualRequest) => {
     data: {
       title: product.title,
       imageUrl: product.imageUrl,
+      productUrl: '',
       discount: product.discount,
       price: price,
       originalPrice: product.price,
