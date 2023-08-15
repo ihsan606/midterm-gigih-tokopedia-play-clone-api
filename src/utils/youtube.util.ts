@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { NotFoundError } from '../errors/NotFoundError';
 
+
 export async function getVideoDetails(videoIds: string[]) {
   try {
     const youtube = google.youtube({
@@ -25,6 +26,7 @@ export async function getVideoDetails(videoIds: string[]) {
       viewCount: video.statistics?.viewCount,
       likeCount: video.statistics?.likeCount,
     };
+    
 
     return data;
    

@@ -10,7 +10,7 @@ export const Comment = z.object({
 export type CommentRequest = z.infer<typeof Comment>;
 
 export type CommentModel = {
-  id: string;
+  id?: string;
   content: string;
   userId: string;
   username?: string;

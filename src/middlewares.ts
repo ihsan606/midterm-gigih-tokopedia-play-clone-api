@@ -5,6 +5,7 @@ import { ZodError } from 'zod';
 import { NotFoundError } from './errors/NotFoundError';
 import { RequestValidator } from './interfaces/RequestValidator';
 import { AlreadyExistError } from './errors/ExistError';
+import { ClientError } from './errors/ClientError';
 
 export const notFound = (req: Request, res: Response, next: NextFunction)=> {
   res.status(404);
@@ -22,8 +23,8 @@ export const errorHandler = (err: Error, req: Request, res: Response<ErrorRespon
     });
     return true;
   }
-  if ( err instanceof NotFoundError || err instanceof AlreadyExistError) {
-    res.status(404).json({
+  if ( err instanceof NotFoundError || err instanceof AlreadyExistError || err instanceof ClientError) {
+    res.status(err.statusCode).json({
       code: err.statusCode,
       message: err.message,
       data: null,
@@ -37,7 +38,6 @@ export const errorHandler = (err: Error, req: Request, res: Response<ErrorRespon
   res.status(statusCode);
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 };
 

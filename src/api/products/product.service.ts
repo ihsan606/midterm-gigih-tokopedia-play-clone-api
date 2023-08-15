@@ -1,17 +1,17 @@
 import { NotFoundError } from '../../errors/NotFoundError';
 import prisma from '../../prisma';
-import { scrapeProductFromTokped } from '../../utils/scrape.util';
 import { ProductManualRequest, ProductRequest } from './product.model';
 import * as VideoService from './../videos/video.service';
+import { scrapeProducts } from '../../utils/cheerio.util';
 
 export const loadProductUrl = async (url: string) => {
-  const product = await scrapeProductFromTokped(url);
-  if (product.price === null) {
+  const product = await scrapeProducts(url);
+  if (product?.price === null) {
     console.log('product false');
 
     console.log(product);
     return {
-      product: {},
+      product: null,
       status: false,
     };
   }
@@ -40,10 +40,10 @@ export const findAllByVideoId = async (videoId: string) => {
 export const createOne = async (product: ProductRequest) => {
   await VideoService.findOne(product.videoId);
   const tokpedProduct = await loadProductUrl(product.tokpedUrl);
-  if (tokpedProduct.status) {
+  if (tokpedProduct.product !== undefined && tokpedProduct.product !== null) {
     return prisma.product.create({
       data: {
-        title: tokpedProduct.product.title ?? '',
+        title: tokpedProduct.product.title,
         imageUrl: tokpedProduct.product.imageUrl ?? '',
         price: tokpedProduct.product.price ?? 0,
         originalPrice: tokpedProduct.product.originalPrice ?? tokpedProduct.product.price ?? 0,

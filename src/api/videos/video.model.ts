@@ -3,7 +3,7 @@ import * as z from 'zod';
 import { WithId } from '../../interfaces/ModelWithId';
 
 const youtubeUrlRegex =
-  /^(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=([\w-]{11})$/;
+  /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})$/;
 
 export const Video = z.object({
   title: z.string().min(1),
@@ -21,7 +21,7 @@ export type VideoModel = {
   id: string;
   title?: string;
   videoUrl?: string;
-  thumbnaiUrl?: string | null;
+  thumbnailUrl?: string | null;
   videoType?: string;
   creatorId?: string;
   creator?: User | null;
@@ -32,7 +32,6 @@ export type VideoModel = {
 export const mapToVideoModel = (video: any, conn: string): VideoModel => {
 
   let thumbnailUrl;
-  console.log(conn, 'koneksinyaa');
   switch (conn) {
     case 'slow-2g':
     case '2g':
@@ -45,7 +44,7 @@ export const mapToVideoModel = (video: any, conn: string): VideoModel => {
       thumbnailUrl = video.thumbnailUrl?.highUrl;
       break;
     case '5g':
-      thumbnailUrl = video.thumbnailUrl?.maxresUrl;
+      thumbnailUrl = video.thumbnailUrl?.maxresUrl ?? video.thumbnailUrl?.highUrl;
       break;
     default:
       thumbnailUrl = video.thumbnailUrl?.defaultUrl;
@@ -54,12 +53,12 @@ export const mapToVideoModel = (video: any, conn: string): VideoModel => {
     id: video.id,
     title: video.title,
     videoUrl: video.videoUrl,
-    thumbnaiUrl: thumbnailUrl ?? null,
+    thumbnailUrl: thumbnailUrl ?? null,
     videoType: video.videoType,
     creatorId: video.creatorId,
     creator: {
       id: video.creatorId,
-      username: video.creator.name,
+      username: video.creator.username,
       role: video.creator.role,     
     },
     startedAt: video.startedAt,
@@ -69,6 +68,6 @@ export const mapToVideoModel = (video: any, conn: string): VideoModel => {
 
 export type User = {
   id: string;
-  username: string | null;
+  username: string ;
   role: Role;
 };

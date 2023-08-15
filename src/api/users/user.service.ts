@@ -1,7 +1,11 @@
+import { Role } from '@prisma/client';
+import { ClientError } from '../../errors/ClientError';
 import { AlreadyExistError } from '../../errors/ExistError';
 import { NotFoundError } from '../../errors/NotFoundError';
 import prisma from '../../prisma';
-import { UserRequest } from './user.model';
+import { createToken } from '../../utils/create-token.util';
+import { LoginRequest, UserRequest } from './user.model';
+import bcrypt from 'bcrypt';
 
 export const checkUserExist = async (email: string, username: string) => {
   const user = await prisma.user.findFirst({
@@ -46,12 +50,14 @@ export const findOne = async (id: string) => {
 
 
 export const createOne = async (user: UserRequest) => {
-  await checkUserExist(user.email, user.password);
-  return prisma.user.create({
+  await checkUserExist(user.email, user.username);
+  const hashedPassword = await bcrypt.hash(user.password, 8);
+  const newUser = await prisma.user.create({
     data: {
       email: user.email,
       username: user.username,
-      password: user.password,
+      password: hashedPassword,
+      role: user.role === Role.USER ? Role.USER : Role.SELLER,
       profile: {
         create: {
           fullName: user.fullName,
@@ -61,8 +67,42 @@ export const createOne = async (user: UserRequest) => {
       },
     },
   });
+
+  newUser.password = '';
+
+  const token = await createToken(newUser.username, newUser.email, newUser.role, newUser.id);
+
+
+  return {
+    user: newUser,
+    token,
+  };
   
 };
+
+export const login = async (user: LoginRequest) => {
+  const currentUser = await prisma.user.findFirst({
+    where: { username: user.username },
+  });
+
+  if (!currentUser) {
+    throw new NotFoundError(`User with username ${user.username} not found`);
+  }
+
+  const isValidPassword = await bcrypt.compare(user.password, currentUser.password);
+  if ( !isValidPassword ) {
+    throw new ClientError('Password is not valid');
+  }
+
+  const token = await createToken(currentUser.username, currentUser.email, currentUser.role, currentUser.id);
+  currentUser.password = '';
+
+  return {
+    user: currentUser,
+    token,
+  };
+};
+
 
 
   
